@@ -1,4 +1,4 @@
-floater
+sticky
 =======
 
 fixed/sticky header and left columns for tables
