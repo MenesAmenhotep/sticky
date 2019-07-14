@@ -1,11 +1,11 @@
-floater
+sticky
 =======
 
 fixed/sticky header and left columns for tables
 
 Look at html/index.html  for usage.
 
-A demo is located here <a href='http://hgsweb.de/sticky/html'>hgsweb.de/sticky</a>
+A demo is located here <a href='http://hgsweb.de/sticky/html/index.html'>hgsweb.de/sticky</a>
 
 A small JavaScript file implementing sticky table headers and 
 sticky left columns to give you the freeze pane functionality 
