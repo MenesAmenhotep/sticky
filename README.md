@@ -22,7 +22,7 @@ files index.html and float.js
 
 As of  13.07.2019 for :
             
-                 Chrome    Opera  FireFox (partialy,  because of bug 1559098) Edge (not yet)
+                 Chrome    Opera  FireFox (partialy,  because of bug 1559098) Edge ( partialy )
                  
 
 Logic

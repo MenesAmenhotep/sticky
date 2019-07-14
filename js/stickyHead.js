@@ -49,6 +49,7 @@ function stickyHead(tableId, headConfig) {
         document.body.removeChild(theHead);
     }
     rotate90(myTable); // rotate header cell if any ..
+
     headConfig = getHeadConfig(headConfig);
 
     //***************************************
@@ -156,7 +157,7 @@ function stickyHead(tableId, headConfig) {
         // *************************************/
         for (i = 0; i < headConfig.ncpth.length; i++) {
             c0 = myTable.rows[i].cells;
-            maxHeight = getMaxHeight(c0); // look for highest cell in this row
+            maxHeight = getMaxHeightStyle(c0); // look for highest cell in this row
             for (j = 0; j < headConfig.ncpth[i]; j++) {
                 cst = topLeftCorner.firstChild.rows[i].cells[j].style;
                 cst.width = window.getComputedStyle(c0[j]).width;
@@ -217,7 +218,7 @@ function stickyHead(tableId, headConfig) {
         // the original data row.
         // *************************************/
         n = theLeftColumn.firstChild.rows.length;
-        for (i = 1; i < n; i++) {
+        for (i = 0; i < n; i++) {
             cells = theLeftColumn.firstChild.rows[i].cells;
             ri = headConfig.ncpth.length + i;
             hi = getMaxHeight(dataRows[ri].cells);
@@ -290,6 +291,20 @@ function stickyHead(tableId, headConfig) {
         n = c0.length;
         for (i = 0; i < n; i++) {
             th = parseFloat(window.getComputedStyle(c0[i]).height);
+            if (th > max) {
+                max = th;
+            }
+        }
+        return max;
+    }
+    function getMaxHeightStyle(c0) {
+        var max = -1, th = -1, i, n;
+        n = c0.length;
+        for (i = 0; i < n; i++) {
+            th = parseFloat(c0[i].style.height);// try this first
+            if (isNaN(th)) {
+                th = parseFloat(window.getComputedStyle(c0[i]).height);
+            }
             if (th > max) {
                 max = th;
             }
