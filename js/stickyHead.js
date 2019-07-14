@@ -342,7 +342,7 @@ function stickyHead(tableId, headConfig) {
     //  scroll in a div
     //*******************************************
 
-    function scrollDiv(e) { //////// scrolling in DIV
+    function scrollDiv(e) { //// scrolling in DIV
         var y, x;
         if (typeof e !== 'undefined') {
             y = e.target.scrollTop;
@@ -458,9 +458,9 @@ function stickyHead(tableId, headConfig) {
             }
         }
     };
-    // ////////////////////////////////////////////////////
+    // ////////////////////
     // functions called when scrolling within a DIV
-    // ////////////////////////////////////////////////////
+    // ////////////////////
 
     theHead.vsyncR = function (x, y) {
         var t = this.style;
