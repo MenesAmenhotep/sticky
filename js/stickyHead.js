@@ -641,6 +641,7 @@ function stickyHead(tableId, headConfig) {
             });
         }
     }
+    scrollBody();
     return{
         scrollBody: scrollBody
     };
