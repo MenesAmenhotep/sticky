@@ -28,7 +28,7 @@ As of  30.07.2019 for :
 Logic
 =====
 
-There are three main block of logic.
+There are two main blocks of logic.
 
 <b>The first block</b> is the construction of three containers to build
 the header (theHeader) , the top left corner (theLeftCorner) being the left part of theHeader 
