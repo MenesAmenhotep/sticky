@@ -20,9 +20,9 @@ value of 'fixed' or 'absolute' , depending on the element and scroll direction.
 For details regarding usage and implementation please see 
 files index.html and float.js 
 
-As of  13.07.2019 for :
+As of  30.07.2019 for :
             
-                 Chrome    Opera  FireFox (partialy,  because of bug 1559098) Edge ( partialy )
+                 Chrome Opera  FireFox (partialy,  because of bug 1559098) Edge ( partialy )
                  
 
 Logic
