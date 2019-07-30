@@ -126,7 +126,7 @@ function stickyHead(tableId, headConfig) {
         //  copy HTML for top left corner  , with this create sticky
         //  table with header
         //*****************************************
-        var temp = [], i, j, c0, cst, ohtml, inner, maxHeight = 0;
+        var temp = [], i, j, c0, cst, inner, maxHeight = 0;
         if (hasLeftColumns === false) {
             return;
         }
@@ -527,7 +527,7 @@ function stickyHead(tableId, headConfig) {
         nr = myTable.rows.length;
         nc = myTable.rows[nr - 1].cells.length;
         p = absPos(myTable, tableParent);
-        flo.ylc = absPos(myTable.rows[headConfig.ncpth.length], tableParent).y;
+        flo.ylc = absPos(myTable, tableParent).y + headHeight;
         pp = absPos(tableParent);
         flo.y = p.y;
         flo.x = p.x;
