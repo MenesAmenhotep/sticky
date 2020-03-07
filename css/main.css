@@ -12,10 +12,7 @@ body{
  
 }
 .hgs_rotate{
-    -webkit-transform: rotate(-90deg);
-    -moz-transform: rotate(-90deg);
-    -o-transform: rotate(-90deg);
-    -ms-transform: rotate(-90deg);
+    transform: rotate(-90deg);
     white-space: nowrap; 
     float:left;
     width:auto;

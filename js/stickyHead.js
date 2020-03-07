@@ -342,7 +342,7 @@ function stickyHead(tableId, headConfig) {
     //  scroll in a div
     //*******************************************
 
-    function scrollDiv(e) { //// scrolling in DIV
+    function scrollDiv(e) { /// scrolling in DIV
         var y, x;
         if (typeof e !== 'undefined') {
             y = e.target.scrollTop;
@@ -406,7 +406,7 @@ function stickyHead(tableId, headConfig) {
         if (t.position === 'absolute') {
             t.position = 'fixed';
             t.left = headConfig.leftDif + 'px';
-            t.top = (flo.ylc - y) + headConfig.topDif + 'px';
+            t.top = (flo.ylc - y)-1 + headConfig.topDif + 'px';
         }
         tt.display === 'none' && y < flo.bottom ? tt.display = '' : '';
         if (tt.position === 'absolute') { // the corner
@@ -458,9 +458,9 @@ function stickyHead(tableId, headConfig) {
             }
         }
     };
-    // ////////////////////
+    // //////////////
     // functions called when scrolling within a DIV
-    // ////////////////////
+    // //////////////
 
     theHead.vsyncR = function (x, y) {
         var t = this.style;
