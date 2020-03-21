@@ -382,7 +382,7 @@ function stickyHead(tableId, headConfig) {
             t.display !== 'none' ? t.display = 'none' : '';
             return;
         }
-        t.display === 'none' ? t.display = 'inline-grid' : '';
+        t.display === 'none' ? t.display = '' : '';
         if (t.position !== 'fixed') {
             t.position = 'fixed';
             t.left = flo.x - x + headConfig.leftDif + 'px';
