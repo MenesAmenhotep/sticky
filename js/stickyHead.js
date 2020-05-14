@@ -15,7 +15,8 @@ function stickyHead(tableId, headConfig) {
             headHeight,
             tableParent,
             scrollParent,
-            scrollFunction;
+            scrollFunction,
+            fireFoxOffset = 0;
     //***************************************
     // locate table
     // *************************************/
@@ -51,6 +52,12 @@ function stickyHead(tableId, headConfig) {
     rotate90(myTable); // rotate header cell if any ..
 
     headConfig = getHeadConfig(headConfig);
+
+    fireFoxOffset = 0;
+    if (navigator.userAgent.toLowerCase().indexOf('firefox') > -1) {
+        fireFoxOffset = 1; // because of  FF bug 1559098
+    }
+
 
     //***************************************
     // make required headers
@@ -406,16 +413,16 @@ function stickyHead(tableId, headConfig) {
         if (t.position === 'absolute') {
             t.position = 'fixed';
             t.left = headConfig.leftDif + 'px';
-            t.top = (flo.ylc - y)-1 + headConfig.topDif + 'px';
+            t.top = (flo.ylc - y) - 1 + headConfig.topDif - fireFoxOffset + 'px';
         }
         tt.display === 'none' && y < flo.bottom ? tt.display = '' : '';
         if (tt.position === 'absolute') { // the corner
             tt.position = 'fixed';
             tt.left = headConfig.leftDif + 'px';
             if (y <= flo.y) {
-                tt.top = (flo.y - y) + headConfig.topDif + 'px';
+                tt.top = (flo.y - y) + headConfig.topDif  + 'px';
             } else {
-                tt.top = headConfig.topDif + 'px';
+                tt.top = headConfig.topDif   + 'px';
             }
         }
     };
