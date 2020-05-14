@@ -18,11 +18,11 @@ These elements are then placed on top or to the left of the table, using a style
 value of 'fixed' or 'absolute' , depending on the element and scroll direction.
 
 For details regarding usage and implementation please see 
-files index.html and float.js 
+files index.html and stickyHead.js 
 
-As of  30.07.2019 for :
+As of  14.05.2020 for :
             
-                 Chrome Opera  FireFox (partialy,  because of bug 1559098) Edge ( partialy )
+                 Chrome, Opera, FireFox (with workaround for bug 1559098), Edge
                  
 
 Logic
