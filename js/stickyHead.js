@@ -425,9 +425,9 @@ function stickyHead(tableId, headConfig) {
             tt.position = 'fixed';
             tt.left = headConfig.leftDif + 'px';
             if (y <= flo.y) {
-                tt.top = (flo.y - y) + headConfig.topDif  + 'px';
+                tt.top = (flo.y - y) + headConfig.topDif + 'px';
             } else {
-                tt.top = headConfig.topDif   + 'px';
+                tt.top = headConfig.topDif + 'px';
             }
         }
     };
@@ -449,7 +449,7 @@ function stickyHead(tableId, headConfig) {
         if (t.display !== 'none') {
             if (t.position === 'fixed') {
                 t.position = 'absolute';
-                t.top = flo.ylc + 'px';
+                t.top = flo.ylc  -1 - fireFoxOffset+ 'px';
                 t.left = parseInt(t.left, 10) + x - headConfig.leftDif + 'px';
                 return;
             }
