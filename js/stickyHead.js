@@ -449,7 +449,7 @@ function stickyHead(tableId, headConfig) {
         if (t.display !== 'none') {
             if (t.position === 'fixed') {
                 t.position = 'absolute';
-                t.top = flo.ylc  -1 - fireFoxOffset+ 'px';
+                t.top = flo.ylc - 1 - fireFoxOffset + 'px';
                 t.left = parseInt(t.left, 10) + x - headConfig.leftDif + 'px';
                 return;
             }
@@ -555,6 +555,7 @@ function stickyHead(tableId, headConfig) {
         return flo;
     }
     function getHeadConfig(headConfig) {
+        var obj;
         //******************************************
         //  get configuration for header
         //*****************************************
@@ -567,9 +568,10 @@ function stickyHead(tableId, headConfig) {
         if (typeof headConfig.topDif !== 'undefined') {
             if (isNaN(headConfig.topDif)) { // not a number ?
                 if (typeof headConfig.topDif === 'string') {
-                    headConfig.topDif = document.getElementById(headConfig.topDif).clientHeight - 1;
+                    obj = document.getElementById(headConfig.topDif);
+                    headConfig.topDif = absPos(obj).y + obj.clientHeight - 1;
                 } else if (typeof headConfig.topDif === 'object') {
-                    headConfig.topDif = headConfig.topDif.clientHeight - 1;
+                    headConfig.topDif = absPos(headConfig.topDif).y + headConfig.topDif.clientHeight - 1;
                 } else {
                     headConfig.topDif = 0;
                 }
@@ -580,9 +582,10 @@ function stickyHead(tableId, headConfig) {
         if (typeof headConfig.leftDif !== 'undefined') {
             if (isNaN(headConfig.leftDif)) { // not a number ?
                 if (typeof headConfig.leftDif === 'string') {
-                    headConfig.leftDif = document.getElementById(headConfig.leftDif).clientHeight - 1;
+                    obj = document.getElementById(headConfig.leftDif);
+                    headConfig.leftDif = absPos(obj).x + obj.clientWidth - 1;
                 } else if (typeof headConfig.topDif === 'object') {
-                    headConfig.leftDif = headConfig.leftDif.clientHeight - 1;
+                    headConfig.leftDif = absPos(headConfig.leftDif).x + headConfig.leftDif.clientWidth - 1;
                 } else {
                     headConfig.leftDif = 0;
                 }
