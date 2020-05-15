@@ -53,6 +53,11 @@ function stickyHead(tableId, headConfig) {
 
     headConfig = getHeadConfig(headConfig);
 
+
+    //********************************************
+    //  below is work around for FireFox bug
+    //*******************************************
+
     fireFoxOffset = 0;
     if (navigator.userAgent.toLowerCase().indexOf('firefox') > -1) {
         fireFoxOffset = 1; // because of  FF bug 1559098
@@ -96,7 +101,7 @@ function stickyHead(tableId, headConfig) {
         //*****************************************
         var temp = [], i, c0;
         theHead = document.createElement('DIV');
-        tableAttributes = getHTML(myTable); // <table ....>
+        tableAttributes = getOuterHTML(myTable); // <table ....>
         temp.push(tableAttributes);
         for (i = 0; i < headConfig.ncpth.length; i++) {
             if (headConfig.ncpth[i] > 0) {
@@ -117,7 +122,7 @@ function stickyHead(tableId, headConfig) {
         // The head would be to small because we 
         // do not have the data rows. Therefore we
         // adjust the width by using the cell width
-        // fromm original header cells
+        // from original header cells
         // *************************************/
         for (i = 0; i < headConfig.ncpth.length; i++) {
             c0 = myTable.rows[i].cells;
@@ -140,9 +145,9 @@ function stickyHead(tableId, headConfig) {
         topLeftCorner = document.createElement('DIV');
         temp.push(tableAttributes); // <table ....>
         for (i = 0; i < headConfig.ncpth.length; i++) {
-            temp.push(getHTML(myTable.rows[i])); // <tr ....>
+            temp.push(getOuterHTML(myTable.rows[i])); // <tr ....>
             for (j = 0; j < headConfig.ncpth[i]; j++) {
-                temp.push(getHTML(myTable.rows[i].cells[j])); // <th ....>
+                temp.push(getOuterHTML(myTable.rows[i].cells[j])); // <th ....>
                 temp.push(myTable.rows[i].cells[j].innerHTML);
                 temp.push('</th>');
             }
@@ -177,7 +182,7 @@ function stickyHead(tableId, headConfig) {
     function makeLeftColumns() {
         //
         //******************************************
-        //  copy HTML for left columnd , with this create sticky
+        //  copy HTML for left column , with this create sticky
         //  left data columns
         //*****************************************
         var dataRows, temp = [], i, j, cst, ts, n, cells, ri, hi;
@@ -192,7 +197,7 @@ function stickyHead(tableId, headConfig) {
         // get leading columns from rows below header
         // *************************************/
         for (i = headConfig.ncpth.length; i < dataRows.length; i++) {
-            temp.push(getHTML(dataRows[i])); // <tr .... >
+            temp.push(getOuterHTML(dataRows[i])); // <tr .... >
             for (j = 0; j < headConfig.nccol; j++) {
                 temp.push(dataRows[i].cells[j].outerHTML); // <td ...> ... </td>
             }
@@ -235,7 +240,7 @@ function stickyHead(tableId, headConfig) {
         topLeftCorner.style.width = window.getComputedStyle(theLeftColumn.firstChild).width;
     }
 
-    function getHTML(obj) {
+    function getOuterHTML(obj) {
         var o = '', i = 0, c = '', sb = '', inString = false;
         o = obj.outerHTML;
         while (true) {
