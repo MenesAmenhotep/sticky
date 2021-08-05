@@ -1,7 +1,7 @@
 function stickyHead(tableId, headConfig) {
     //***************************************
     // make sure the table is allready rendered
-    // and displayed on screen before 
+    // and displayed on screen before  
     // calling this function
     // *************************************/
     var
