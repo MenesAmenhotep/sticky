@@ -1,7 +1,7 @@
 function stickyHead(tableId, headConfig) {
     //***************************************
     // make sure the table is allready rendered
-    // and displayed on screen before  
+    // and displayed on screen before 
     // calling this function
     // *************************************/
     var
@@ -16,7 +16,8 @@ function stickyHead(tableId, headConfig) {
             tableParent,
             scrollParent,
             scrollFunction,
-            fireFoxOffset = 0;
+            fireFoxOffset = 0,
+            tHeight, tWidth;
     //***************************************
     // locate table
     // *************************************/
@@ -47,13 +48,13 @@ function stickyHead(tableId, headConfig) {
 
     theHead = document.getElementById('float_' + myTable.id);
     if (theHead) {
+        document.body.removeChild(theHead.topLeftCorner);
+        document.body.removeChild(theHead.theLeftColumn);
         document.body.removeChild(theHead);
+    } else {
+        rotate90(myTable); // rotate header cell if any ..
     }
-    rotate90(myTable); // rotate header cell if any ..
-
     headConfig = getHeadConfig(headConfig);
-
-
     //********************************************
     //  below is work around for FireFox bug
     //*******************************************
@@ -90,9 +91,29 @@ function stickyHead(tableId, headConfig) {
     //*****************************************
     theHead.scroll = scrollFunction;
     scrollParent.addEventListener('scroll', theHead.scroll, false);
-    window.addEventListener('resize', function () {
+
+    tHeight = myTable.clientHeight;
+    tWidth = myTable.clientWidth;
+
+
+    window.addEventListener('resize', resizeStart, false);
+    function resizeStart() {
+        window.removeEventListener('resize', resizeStart, false);
+        window.addEventListener('mouseover', resizeEnd, false);
+    }
+    function resizeEnd() {
+        window.removeEventListener('mouseover', resizeEnd, false);
         setFlo(flo);
-    }, false);
+        if (tHeight !== myTable.clientHeight ||
+                tWidth !== myTable.clientWidth) {
+            stickyHead(myTable, headConfig);
+            return;
+        }
+        window.addEventListener('resize', resizeStart, false);
+    }
+    setFlo(flo);
+
+
     function makeHead() {
 
         //******************************************
@@ -101,6 +122,7 @@ function stickyHead(tableId, headConfig) {
         //*****************************************
         var temp = [], i, c0;
         theHead = document.createElement('DIV');
+        theHead.style.backgroundColor = 'white';
         tableAttributes = getOuterHTML(myTable); // <table ....>
         temp.push(tableAttributes);
         for (i = 0; i < headConfig.ncpth.length; i++) {
@@ -116,8 +138,7 @@ function stickyHead(tableId, headConfig) {
         theHead.firstChild.style.marginTop = 0;
         theHead.firstChild.style.width = '100%';
         theHead.firstChild.id = '';
-        headHeight = theHead.firstChild.clientHeight; // save because it is rendered now
-        theHead.style.display = 'none';
+
         //***************************************
         // The head would be to small because we 
         // do not have the data rows. Therefore we
@@ -128,9 +149,14 @@ function stickyHead(tableId, headConfig) {
             c0 = myTable.rows[i].cells;
             [].forEach.call(c0, (cell, j) => {
                 theHead.firstChild.rows[i].cells[j].style.width = window.getComputedStyle(cell).width;
+                if (fireFoxOffset === 0) {
+                    // theHead.firstChild.rows[i].cells[j].style.padding = 0;
+                }
             });
         }
+        headHeight = theHead.firstChild.clientHeight; // save because it is rendered now
         theHead.style.width = window.getComputedStyle(myTable).width;
+        theHead.style.display = 'none';
     }
     function makeTopLeftCorner() {
         //
@@ -138,12 +164,14 @@ function stickyHead(tableId, headConfig) {
         //  copy HTML for top left corner  , with this create sticky
         //  table with header
         //*****************************************
-        var temp = [], i, j, c0, cst, inner, maxHeight = 0;
+        var temp = [], i, j, c0, cst, inner, trHeight, maxHeight = 0;
         if (hasLeftColumns === false) {
             return;
         }
         topLeftCorner = document.createElement('DIV');
+        topLeftCorner.style.backgroundColor = 'white';
         temp.push(tableAttributes); // <table ....>
+        temp.push('<thead>');
         for (i = 0; i < headConfig.ncpth.length; i++) {
             temp.push(getOuterHTML(myTable.rows[i])); // <tr ....>
             for (j = 0; j < headConfig.ncpth[i]; j++) {
@@ -153,7 +181,7 @@ function stickyHead(tableId, headConfig) {
             }
             temp.push('</tr>');
         }
-        temp.push('</table>');
+        temp.push('</thead></table>');
         inner = temp.join('');
         topLeftCorner.innerHTML = inner;
         tableParent.appendChild(topLeftCorner);
@@ -167,6 +195,7 @@ function stickyHead(tableId, headConfig) {
         // as original. Therefor we adjust cell width and height
         // using the original cell dimensions.
         // *************************************/
+
         for (i = 0; i < headConfig.ncpth.length; i++) {
             c0 = myTable.rows[i].cells;
             maxHeight = getMaxHeightStyle(c0); // look for highest cell in this row
@@ -177,7 +206,7 @@ function stickyHead(tableId, headConfig) {
             }
         }
         topLeftCorner.style.height = headHeight + 'px';
-        topLeftCorner.style.display = 'none';
+
     }
     function makeLeftColumns() {
         //
@@ -190,6 +219,7 @@ function stickyHead(tableId, headConfig) {
             return;
         }
         theLeftColumn = document.createElement('DIV');
+        theLeftColumn.style.backgroundColor = 'white';
         temp.push(tableAttributes); //<table .... >
         temp.push('<tbody>');
         dataRows = myTable.rows;
@@ -329,6 +359,7 @@ function stickyHead(tableId, headConfig) {
 
     function scrollBody() { // scrolling in document
         var y, x;
+
         y = window.pageYOffset + headConfig.topDif;
         x = window.pageXOffset + headConfig.leftDif;
         if (flo.sy !== y) {// vertical scrolling
@@ -540,7 +571,7 @@ function stickyHead(tableId, headConfig) {
         nc = myTable.rows[nr - 1].cells.length;
         p = absPos(myTable, tableParent);
         flo.ylc = absPos(myTable, tableParent).y + headHeight;
-        pp = absPos(tableParent);
+        pp = absPos(myTable, tableParent);
         flo.y = p.y;
         flo.x = p.x;
         flo.dy = pp.y;
@@ -569,7 +600,7 @@ function stickyHead(tableId, headConfig) {
             if (isNaN(headConfig.topDif)) { // not a number ?
                 if (typeof headConfig.topDif === 'string') {
                     obj = document.getElementById(headConfig.topDif);
-                    headConfig.topDif = absPos(obj).y + obj.clientHeight - 1;
+                    headConfig.topDif = obj.clientHeight - 1;
                 } else if (typeof headConfig.topDif === 'object') {
                     headConfig.topDif = absPos(headConfig.topDif).y + headConfig.topDif.clientHeight - 1;
                 } else {
@@ -583,7 +614,7 @@ function stickyHead(tableId, headConfig) {
             if (isNaN(headConfig.leftDif)) { // not a number ?
                 if (typeof headConfig.leftDif === 'string') {
                     obj = document.getElementById(headConfig.leftDif);
-                    headConfig.leftDif = absPos(obj).x + obj.clientWidth - 1;
+                    headConfig.leftDif = obj.clientWidth - 1;
                 } else if (typeof headConfig.topDif === 'object') {
                     headConfig.leftDif = absPos(headConfig.leftDif).x + headConfig.leftDif.clientWidth - 1;
                 } else {
@@ -656,8 +687,47 @@ function stickyHead(tableId, headConfig) {
             });
         }
     }
-    scrollBody();
+    
+    function sync(ri, ci) {
+        var cii, l, th, co;
+        l = theHead.firstChild.rows.length - 1;
+        cii = findCi(ci, theHead.firstChild.rows[l].cells);
+        if (cii === -1) {
+            return;
+        }
+        let ww = window.getComputedStyle(myTable).width;
+        theHead.style.width = ww;
+        co = myTable.rows[ri].cells[ci];
+        th = parseFloat(co.style.width);// try this first
+        if (isNaN(th)) {
+            th = parseFloat(window.getComputedStyle(co).width);
+        }
+        theHead.firstChild.rows[l].cells[cii].style.width = th + 'px';
+
+        if (hasLeftColumns) {
+            ri -= headConfig.ncpth.length;
+            let row = theLeftColumn.firstChild.rows[ri];
+            row.style.height = window.getComputedStyle(theHead.firstChild.rows[l]).clientHeight;
+        }
+
+    }
+
+    function findCi(ci, cells) {
+        var prev = 0, i, n;
+        n = cells.length;
+        for (i = 0; i < n; i++) {
+            if (prev + cells[i].colSpan - 1 >= ci) {
+                return i;
+            }
+            prev += cells[i].colSpan;
+        }
+        return -1;
+    }
+  
+    scrollBody()
+    sync(headConfig.ncpth.length, 0);
     return{
+        sync: sync,
         scrollBody: scrollBody
     };
 }
