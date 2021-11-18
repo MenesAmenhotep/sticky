@@ -20,6 +20,10 @@ value of 'fixed' or 'absolute' , depending on the element and scroll direction.
 For details regarding usage and implementation please see 
 files index.html and stickyHead.js 
 
+18.11.2021
+
+added code to support resize and relod events.
+
 As of  14.05.2020 for :
             
                  Chrome, Opera, FireFox (with workaround for bug 1559098), Edge
