@@ -687,7 +687,7 @@ function stickyHead(tableId, headConfig) {
             });
         }
     }
-    
+
     function sync(ri, ci) {
         var cii, l, th, co;
         l = theHead.firstChild.rows.length - 1;
@@ -705,9 +705,9 @@ function stickyHead(tableId, headConfig) {
         theHead.firstChild.rows[l].cells[cii].style.width = th + 'px';
 
         if (hasLeftColumns) {
-            ri -= headConfig.ncpth.length;
-            let row = theLeftColumn.firstChild.rows[ri];
-            row.style.height = window.getComputedStyle(theHead.firstChild.rows[l]).clientHeight;
+            let cell = myTable.rows[ri].cells[ci];
+            let h = window.getComputedStyle(cell).height;
+            theLeftColumn.firstChild.rows[ri - headConfig.ncpth.length].cells[0].style.height = h;
         }
 
     }
@@ -723,7 +723,7 @@ function stickyHead(tableId, headConfig) {
         }
         return -1;
     }
-  
+
     scrollBody()
     sync(headConfig.ncpth.length, 0);
     return{
