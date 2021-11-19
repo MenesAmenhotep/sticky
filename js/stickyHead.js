@@ -61,7 +61,7 @@ function stickyHead(tableId, headConfig) {
 
     fireFoxOffset = 0;
     if (navigator.userAgent.toLowerCase().indexOf('firefox') > -1) {
-        fireFoxOffset = 1; // because of  FF bug 1559098
+      //  fireFoxOffset = 1; // because of  FF bug 1559098
     }
 
 
@@ -238,6 +238,7 @@ function stickyHead(tableId, headConfig) {
         tableParent.appendChild(theLeftColumn);
         theLeftColumn.firstChild.style.marginLeft = 0;
         theLeftColumn.firstChild.style.marginTop = 0;
+        theLeftColumn.firstChild.style.whiteSpace = 'nowrap';
         theLeftColumn.firstChild.id = '';
         theLeftColumn.style.display = 'none';
         theLeftColumn.style.padding = '0px';
@@ -687,6 +688,20 @@ function stickyHead(tableId, headConfig) {
             });
         }
     }
+    function newRow(ri) {
+        let row, nc, i;
+        if (hasLeftColumns) {
+            row = theLeftColumn.firstChild.insertRow(ri - headConfig.ncpth.length);
+            for (i = 0; i < headConfig.nccol; i++) {
+                row.insertCell(i);
+            }
+        }
+        ri++;
+        nc = myTable.rows[ri].cells.length;
+        for (i = 0; i < nc; i++) {
+            sync(ri, i);
+        }
+    }
 
     function sync(ri, ci) {
         var cii, l, th, co;
@@ -709,11 +724,11 @@ function stickyHead(tableId, headConfig) {
             if (ci < headConfig.nccol) { // part of theLeftColumn, topLeftCorner ?
                 theLeftColumn.firstChild.rows[ri - headConfig.ncpth.length].cells[ci].innerHTML = cell.innerHTML;
                 topLeftCorner.firstChild.rows[headConfig.ncpth.length - 1].cells[ci].style.width = window.getComputedStyle(cell).width;
+                theLeftColumn.style.width = window.getComputedStyle(cell).width;
             }
             let h = window.getComputedStyle(cell).height;
             theLeftColumn.firstChild.rows[ri - headConfig.ncpth.length].cells[0].style.height = h;
         }
-
     }
 
     function findCi(ci, cells) {
@@ -732,6 +747,7 @@ function stickyHead(tableId, headConfig) {
     sync(headConfig.ncpth.length, 0);
     return{
         sync: sync,
-        scrollBody: scrollBody
+        scrollBody: scrollBody,
+        newRow: newRow
     };
 }
