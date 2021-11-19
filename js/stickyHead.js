@@ -706,6 +706,10 @@ function stickyHead(tableId, headConfig) {
 
         if (hasLeftColumns) {
             let cell = myTable.rows[ri].cells[ci];
+            if (ci < headConfig.nccol) { // part of theLeftColumn, topLeftCorner ?
+                theLeftColumn.firstChild.rows[ri - headConfig.ncpth.length].cells[ci].innerHTML = cell.innerHTML;
+                topLeftCorner.firstChild.rows[headConfig.ncpth.length - 1].cells[ci].style.width = window.getComputedStyle(cell).width;
+            }
             let h = window.getComputedStyle(cell).height;
             theLeftColumn.firstChild.rows[ri - headConfig.ncpth.length].cells[0].style.height = h;
         }
@@ -724,7 +728,7 @@ function stickyHead(tableId, headConfig) {
         return -1;
     }
 
-    scrollBody()
+    scrollBody();
     sync(headConfig.ncpth.length, 0);
     return{
         sync: sync,
