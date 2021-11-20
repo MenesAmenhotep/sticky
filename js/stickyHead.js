@@ -61,7 +61,7 @@ function stickyHead(tableId, headConfig) {
 
     fireFoxOffset = 0;
     if (navigator.userAgent.toLowerCase().indexOf('firefox') > -1) {
-      //  fireFoxOffset = 1; // because of  FF bug 1559098
+        //  fireFoxOffset = 1; // because of  FF bug 1559098
     }
 
 
@@ -219,7 +219,7 @@ function stickyHead(tableId, headConfig) {
             return;
         }
         theLeftColumn = document.createElement('DIV');
-        theLeftColumn.style.backgroundColor = 'white';
+
         temp.push(tableAttributes); //<table .... >
         temp.push('<tbody>');
         dataRows = myTable.rows;
@@ -240,6 +240,7 @@ function stickyHead(tableId, headConfig) {
         theLeftColumn.firstChild.style.marginTop = 0;
         theLeftColumn.firstChild.style.whiteSpace = 'nowrap';
         theLeftColumn.firstChild.id = '';
+        theLeftColumn.firstChild.style.backgroundColor = 'white';
         theLeftColumn.style.display = 'none';
         theLeftColumn.style.padding = '0px';
         theLeftColumn.style.margin = '0px';
@@ -691,12 +692,23 @@ function stickyHead(tableId, headConfig) {
     function newRow(ri) {
         let row, nc, i;
         if (hasLeftColumns) {
-            row = theLeftColumn.firstChild.insertRow(ri - headConfig.ncpth.length);
+            row = theLeftColumn.firstChild.insertRow(ri);
             for (i = 0; i < headConfig.nccol; i++) {
                 row.insertCell(i);
             }
         }
         ri++;
+        nc = myTable.rows[ri].cells.length;
+        for (i = 0; i < nc; i++) {
+            sync(ri, i);
+        }
+    }
+    function deleteRow(ri) {
+        let row, nc, i;
+        if (hasLeftColumns) {
+           theLeftColumn.firstChild.deleteRow(ri - headConfig.ncpth.length);
+        }
+        ri = myTable.rows.length - 1;
         nc = myTable.rows[ri].cells.length;
         for (i = 0; i < nc; i++) {
             sync(ri, i);
@@ -748,6 +760,7 @@ function stickyHead(tableId, headConfig) {
     return{
         sync: sync,
         scrollBody: scrollBody,
-        newRow: newRow
+        newRow: newRow,
+        deleteRow: deleteRow
     };
 }
