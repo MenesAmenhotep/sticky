@@ -1,9 +1,10 @@
 function stickyHead(tableId, headConfig) {
-    //***************************************
-    // make sure the table is allready rendered
-    // and displayed on screen before 
-    // calling this function
-    // *************************************/
+
+//***************************************
+// make sure the table is allready rendered
+// and displayed on screen before 
+// calling this function
+// *************************************/
     var
             myTable,
             theHead,
@@ -29,9 +30,10 @@ function stickyHead(tableId, headConfig) {
     if (myTable === null) {
         return;
     }
-    //********************************************
-    //  test if we scroll within a div
-    //*******************************************
+
+//********************************************
+//  test if we scroll within a div
+//*******************************************
     tableParent = document.getElementById(myTable.id + '_parent');
     if (tableParent !== null) {
         tableParent.style.position = 'relative';
@@ -42,9 +44,9 @@ function stickyHead(tableId, headConfig) {
         scrollParent = window;
         scrollFunction = scrollBody;
     }
-    //******************************************
-    //  remove any existing sticky header for this table
-    //*****************************************
+//******************************************
+//  remove any existing sticky header for this table
+//*****************************************
 
     theHead = document.getElementById('float_' + myTable.id);
     if (theHead) {
@@ -58,63 +60,62 @@ function stickyHead(tableId, headConfig) {
     //********************************************
     //  below is work around for FireFox bug
     //*******************************************
-
     fireFoxOffset = 0;
     if (navigator.userAgent.toLowerCase().indexOf('firefox') > -1) {
-        //  fireFoxOffset = 1; // because of  FF bug 1559098
+        fireFoxOffset = 1; // because of  FF bug 1559098
     }
 
-
-    //***************************************
-    // make required headers
-    // *************************************/
+//***************************************
+// make required headers
+// *************************************/
     makeHead();
     makeTopLeftCorner();
     makeLeftColumns();
-    //***************************************
-    // save pointers to myself
-    // *************************************/
+//***************************************
+// save pointers to myself
+// *************************************/
     theHead.topLeftCorner = topLeftCorner;
     theHead.theLeftColumn = theLeftColumn;
     theLeftColumn.topLeftCorner = topLeftCorner;
     theHead.id = 'float_' + myTable.id;
     theHead.myTable = myTable;
-    //******************************************
-    //  set geomterie of original table and sticky header
-    //*****************************************
+//******************************************
+//  set geomterie of original table and sticky header
+//*****************************************
     flo = setFlo(flo);
     setTableHeadGeometry();
     setLeftColumnGeometry(headConfig);
     setTopLeftCornerGeometry();
-    //******************************************
-    //  assign event listener for scrolling
-    //*****************************************
+//******************************************
+//  assign event listener for scrolling
+//*****************************************
     theHead.scroll = scrollFunction;
     scrollParent.addEventListener('scroll', theHead.scroll, false);
-
-    tHeight = myTable.clientHeight;
-    tWidth = myTable.clientWidth;
-
-
     window.addEventListener('resize', resizeStart, false);
-    function resizeStart() {
+    function resizeStart()
+    {
         window.removeEventListener('resize', resizeStart, false);
         window.addEventListener('mouseover', resizeEnd, false);
     }
+
     function resizeEnd() {
         window.removeEventListener('mouseover', resizeEnd, false);
-        setFlo(flo);
+        flo = setFlo(flo);
         if (tHeight !== myTable.clientHeight ||
                 tWidth !== myTable.clientWidth) {
             stickyHead(myTable, headConfig);
             return;
         }
+        flo.sx = -1; // table probably moved in x and/or y
+        flo.sy = -1;  // while resized
+        scrollBody();
         window.addEventListener('resize', resizeStart, false);
     }
-    setFlo(flo);
-
-
-    function makeHead() {
+    flo = setFlo(flo);
+    tHeight = myTable.clientHeight;
+    tWidth = myTable.clientWidth;
+    function makeHead()
+    {
 
         //******************************************
         //  copy HTML for header rows , with this create sticky
@@ -122,6 +123,7 @@ function stickyHead(tableId, headConfig) {
         //*****************************************
         var temp = [], i, c0;
         theHead = document.createElement('DIV');
+        theHead.dataset.killme = '1';
         theHead.style.backgroundColor = 'white';
         tableAttributes = getOuterHTML(myTable); // <table ....>
         temp.push(tableAttributes);
@@ -138,7 +140,6 @@ function stickyHead(tableId, headConfig) {
         theHead.firstChild.style.marginTop = 0;
         theHead.firstChild.style.width = '100%';
         theHead.firstChild.id = '';
-
         //***************************************
         // The head would be to small because we 
         // do not have the data rows. Therefore we
@@ -150,46 +151,51 @@ function stickyHead(tableId, headConfig) {
             [].forEach.call(c0, (cell, j) => {
                 theHead.firstChild.rows[i].cells[j].style.width = window.getComputedStyle(cell).width;
                 if (fireFoxOffset === 0) {
-                    // theHead.firstChild.rows[i].cells[j].style.padding = 0;
+// theHead.firstChild.rows[i].cells[j].style.padding = 0;
                 }
             });
         }
         headHeight = theHead.firstChild.clientHeight; // save because it is rendered now
+        headHeight = parseInt(window.getComputedStyle(theHead.firstChild).height); // save because it is rendered now
         theHead.style.width = window.getComputedStyle(myTable).width;
         theHead.style.display = 'none';
     }
+
     function makeTopLeftCorner() {
-        //
-        //******************************************
-        //  copy HTML for top left corner  , with this create sticky
-        //  table with header
-        //*****************************************
-        var temp = [], i, j, c0, cst, inner, trHeight, maxHeight = 0;
+//
+//******************************************
+//  copy HTML for top left corner  , with this create sticky
+//  table with header
+//*****************************************
+        var temp = [], i, j, c0, cst, maxHeight = 0;
         if (hasLeftColumns === false) {
             return;
         }
         topLeftCorner = document.createElement('DIV');
+        topLeftCorner.dataset.killme = '1';
         topLeftCorner.style.backgroundColor = 'white';
         temp.push(tableAttributes); // <table ....>
         temp.push('<thead>');
         for (i = 0; i < headConfig.ncpth.length; i++) {
             temp.push(getOuterHTML(myTable.rows[i])); // <tr ....>
-            for (j = 0; j < headConfig.ncpth[i]; j++) {
-                temp.push(getOuterHTML(myTable.rows[i].cells[j])); // <th ....>
-                temp.push(myTable.rows[i].cells[j].innerHTML);
+            if (headConfig.ncpth[i] === 0) {
+                temp.push(getOuterHTML(myTable.rows[i].cells[0])); // <th ....>
                 temp.push('</th>');
+            } else {
+                for (j = 0; j < headConfig.ncpth[i]; j++) {
+                    temp.push(myTable.rows[i].cells[j].outerHTML);
+                }
             }
             temp.push('</tr>');
         }
         temp.push('</thead></table>');
-        inner = temp.join('');
-        topLeftCorner.innerHTML = inner;
+        topLeftCorner.innerHTML = temp.join('');
         tableParent.appendChild(topLeftCorner);
         topLeftCorner.firstChild.style.marginLeft = 0;
         topLeftCorner.firstChild.style.marginTop = 0;
         topLeftCorner.firstChild.style.height = headHeight + 'px';
-        topLeftCorner.firstChild.id = '';
-
+        topLeftCorner.firstChild.style.whiteSpace = 'nowrap';
+        topLeftCorner.firstChild.id = 'tlc';
         //  ************************************
         // top left corner of header must have same geometrie 
         // as original. Therefor we adjust cell width and height
@@ -199,29 +205,48 @@ function stickyHead(tableId, headConfig) {
         for (i = 0; i < headConfig.ncpth.length; i++) {
             c0 = myTable.rows[i].cells;
             maxHeight = getMaxHeightStyle(c0); // look for highest cell in this row
-            for (j = 0; j < headConfig.ncpth[i]; j++) {
-                cst = topLeftCorner.firstChild.rows[i].cells[j].style;
-                cst.width = window.getComputedStyle(c0[j]).width;
-                cst.height = maxHeight + 'px';
+            if (headConfig.ncpth[i] === 0) {
+                topLeftCorner.firstChild.rows[i].cells[0].style.height = window.getComputedStyle(myTable.rows[i].cells[0]).height;
+            } else {
+                for (j = 0; j < headConfig.ncpth[i]; j++) {
+                    cst = topLeftCorner.firstChild.rows[i].cells[j].style;
+                    cst.width = window.getComputedStyle(c0[j]).width;
+                    cst.height = maxHeight + 'px';
+                }
             }
         }
         topLeftCorner.style.height = headHeight + 'px';
+        //topLeftCorner.style.width = window.getComputedStyle(topLeftCorner.firstChild).width;
 
     }
+
     function makeLeftColumns() {
-        //
-        //******************************************
-        //  copy HTML for left column , with this create sticky
-        //  left data columns
-        //*****************************************
-        var dataRows, temp = [], i, j, cst, ts, n, cells, ri, hi;
+//
+//******************************************
+//  copy HTML for left column , with this create sticky
+//  left data columns
+//*****************************************
+        var dataRows, temp = [], i, j, cst, n, cells, ri, hi;
         if (hasLeftColumns === false) {
             return;
         }
         theLeftColumn = document.createElement('DIV');
+        theLeftColumn.dataset.killme = '1';
+        temp.push(tableAttributes); // <table ....>
 
-        temp.push(tableAttributes); //<table .... >
-        temp.push('<tbody>');
+        for (i = 0; i < headConfig.ncpth.length; i++) {
+            temp.push(getOuterHTML(myTable.rows[i])); // <tr ....>
+            if (headConfig.ncpth[i] === 0) {
+                temp.push(getOuterHTML(myTable.rows[i].cells[0])); // <th ....>
+                temp.push('&nbsp;</th>');
+            } else {
+                for (j = 0; j < headConfig.ncpth[i]; j++) {
+                    temp.push(myTable.rows[i].cells[j].outerHTML);
+                }
+            }
+            temp.push('</tr>');
+        }
+
         dataRows = myTable.rows;
         //***************************************
         // get leading columns from rows below header
@@ -229,11 +254,12 @@ function stickyHead(tableId, headConfig) {
         for (i = headConfig.ncpth.length; i < dataRows.length; i++) {
             temp.push(getOuterHTML(dataRows[i])); // <tr .... >
             for (j = 0; j < headConfig.nccol; j++) {
+                dataRows[i].cells[j].innerHTML === '' ? dataRows[i].cells[j].innerHTML = '&nbsp;' : '';
                 temp.push(dataRows[i].cells[j].outerHTML); // <td ...> ... </td>
             }
             temp.push('</tr>');
         }
-        temp.push('</tbody></table>');
+        temp.push('</table>');
         theLeftColumn.innerHTML = temp.join('');
         tableParent.appendChild(theLeftColumn);
         theLeftColumn.firstChild.style.marginLeft = 0;
@@ -241,35 +267,33 @@ function stickyHead(tableId, headConfig) {
         theLeftColumn.firstChild.style.whiteSpace = 'nowrap';
         theLeftColumn.firstChild.id = '';
         theLeftColumn.firstChild.style.backgroundColor = 'white';
-        theLeftColumn.style.display = 'none';
+        theLeftColumn.style.display = '';
         theLeftColumn.style.padding = '0px';
         theLeftColumn.style.margin = '0px';
-        //***************************************
-        // left columns must have same geometrie as
-        // the original. For the first row we set 
-        // cell heights and width using the dimensions
-        // from the original first data row.
-        // *************************************/
-        for (j = 0; j < headConfig.nccol; j++) {
-            cst = window.getComputedStyle(dataRows[headConfig.ncpth.length ].cells[j]);
-            ts = theLeftColumn.firstChild.rows[0].cells[j].style;
-            ts.width = cst.width;
-            ts.height = cst.height;
+        //  theLeftColumn.style.width = window.getComputedStyle(theLeftColumn.firstChild).width;
+
+        let c0, maxHeight;
+        for (i = 0; i < headConfig.ncpth.length; i++) {
+            c0 = myTable.rows[i].cells;
+            maxHeight = getMaxHeightStyle(c0); // look for highest cell in this row
+            if (headConfig.ncpth[i] === 0) {
+                theLeftColumn.firstChild.rows[i].cells[0].style.height = window.getComputedStyle(myTable.rows[i].cells[0]).height;
+            } else {
+                for (j = 0; j < headConfig.ncpth[i]; j++) {
+                    cst = theLeftColumn.firstChild.rows[i].cells[j].style;
+                    cst.width = window.getComputedStyle(c0[j]).width;
+                    cst.height = maxHeight + 'px';
+                }
+            }
         }
-        //***************************************
-        // for all other rows we adjust the
-        // cell height of the first cell in a row  to the heighest cell in 
-        // the original data row.
-        // *************************************/
+        /************************************************************************************************/
+        theLeftColumn.style.display = 'none'; // !!! IMPORTAND so bowser won't render while looping
+        /***********************************************************************************************/
         n = theLeftColumn.firstChild.rows.length;
         for (i = 0; i < n; i++) {
-            cells = theLeftColumn.firstChild.rows[i].cells;
-            ri = headConfig.ncpth.length + i;
-            hi = getMaxHeight(dataRows[ri].cells);
-            cells[0].innerHTML === '' ? cells[0].innerHTML = '&nbsp;' : '';
-            cells[0].style.height = hi + 'px';
+            theLeftColumn.firstChild.rows[i].style.height = window.getComputedStyle(dataRows[i]).height;
         }
-        topLeftCorner.style.width = window.getComputedStyle(theLeftColumn.firstChild).width;
+        return;
     }
 
     function getOuterHTML(obj) {
@@ -295,6 +319,7 @@ function stickyHead(tableId, headConfig) {
         }
         return obj.outerHTML.substr(0, i);
     }
+
     function setLeftColumnGeometry(headConfig) {
         if (!hasLeftColumns) {
             return;
@@ -307,6 +332,7 @@ function stickyHead(tableId, headConfig) {
         st.display = 'none';
         st.position = 'absolute';
     }
+
     function setTopLeftCornerGeometry() {
         if (!hasLeftColumns) {
             return;
@@ -320,6 +346,7 @@ function stickyHead(tableId, headConfig) {
         st.position = 'absolute';
         theHead.rightEdge = topLeftCorner.rightEdge;
     }
+
     function setTableHeadGeometry() {
         var st = theHead.style;
         st.zIndex = 15; // above table and left column
@@ -330,9 +357,12 @@ function stickyHead(tableId, headConfig) {
         st.position = 'absolute';
     }
 
+
     function getMaxHeight(c0) {
         var max = -1, th = -1, i, n;
         n = c0.length;
+        max = parseFloat(window.getComputedStyle(c0[0].parentNode).height);
+        return max;
         for (i = 0; i < n; i++) {
             th = parseFloat(window.getComputedStyle(c0[i]).height);
             if (th > max) {
@@ -341,11 +371,12 @@ function stickyHead(tableId, headConfig) {
         }
         return max;
     }
+
     function getMaxHeightStyle(c0) {
         var max = -1, th = -1, i, n;
         n = c0.length;
         for (i = 0; i < n; i++) {
-            th = parseFloat(c0[i].style.height);// try this first
+            th = parseFloat(c0[i].style.height); // try this first
             if (isNaN(th)) {
                 th = parseFloat(window.getComputedStyle(c0[i]).height);
             }
@@ -355,18 +386,19 @@ function stickyHead(tableId, headConfig) {
         }
         return max;
     }
-    //******************************************
-    //  callback if page is scrolled
-    //*****************************************
+
+//******************************************
+//  callback if page is scrolled
+//*****************************************
 
     function scrollBody() { // scrolling in document
         var y, x;
-
         y = window.pageYOffset + headConfig.topDif;
         x = window.pageXOffset + headConfig.leftDif;
         if (flo.sy !== y) {// vertical scrolling
             flo.sy = y;
             window.requestAnimationFrame(function () {
+                setFlo(flo);
                 theHead.verticalSync(x, y);
                 if (hasLeftColumns) {
                     theLeftColumn.vsync(x, y);
@@ -376,43 +408,22 @@ function stickyHead(tableId, headConfig) {
         if (flo.sx !== x) { // horizontal scrolling
             flo.sx = x;
             window.requestAnimationFrame(function () {
+                setFlo(flo);
                 theHead.horizontalSync(x, y);
                 if (hasLeftColumns) {
                     theLeftColumn.hsync(x, y);
                 }
             });
         }
-    }
-    //********************************************
-    //  scroll in a div
-    //*******************************************
 
-    function scrollDiv(e) { /// scrolling in DIV
-        var y, x;
-        if (typeof e !== 'undefined') {
-            y = e.target.scrollTop;
-            x = e.target.scrollLeft;
-        } else {
-            flo.sy++;
-            flo.sx++;
-        }
-        if (flo.sy !== y) {// vertical scrolling
-            flo.sy = y;
-            window.requestAnimationFrame(function () {
-                theHead.vsyncR(x, y);
-                theLeftColumn.vsyncR(x, y);
-            });
-
-        }
-        if (flo.sx !== x) { // horizontal scrolling
-            flo.sx = x;
-            theLeftColumn.hsyncR(x, y);
-        }
     }
-    //******************************************
-    //  if real table header scrolls out or back  into view
-    //   move sticky head in or out
-    //*****************************************
+
+
+
+//******************************************
+//  if real table header scrolls out or back  into view
+//   move sticky head in or out
+//*****************************************
     theHead.horizontalSync = function (x, y) {
         var t = this.style;
         if (t.position === 'fixed') {
@@ -421,7 +432,8 @@ function stickyHead(tableId, headConfig) {
             t.top = y + 'px';
         }
     };
-    theHead.verticalSync = function (x, y) {
+    theHead.verticalSync = function (x, y)
+    {
         var t = this.style;
         if ((y < flo.y || y > flo.bottom)) {
             t.display !== 'none' ? t.display = 'none' : '';
@@ -434,7 +446,8 @@ function stickyHead(tableId, headConfig) {
             t.top = headConfig.topDif + 'px';
         }
     };
-    theLeftColumn.hsync = function (x, y) {
+    theLeftColumn.hsync = function (x, y)
+    {
         var t = this.style, tt = this.topLeftCorner.style;
         if (t === null) {
             return;
@@ -451,7 +464,7 @@ function stickyHead(tableId, headConfig) {
         if (t.position === 'absolute') {
             t.position = 'fixed';
             t.left = headConfig.leftDif + 'px';
-            t.top = (flo.ylc - y) - 1 + headConfig.topDif - fireFoxOffset + 'px';
+            t.top = flo.y - y + headConfig.topDif + 'px';
         }
         tt.display === 'none' && y < flo.bottom ? tt.display = '' : '';
         if (tt.position === 'absolute') { // the corner
@@ -464,7 +477,8 @@ function stickyHead(tableId, headConfig) {
             }
         }
     };
-    theLeftColumn.vsync = function (x, y) {
+    theLeftColumn.vsync = function (x, y)
+    {
         var t = this.style, tt = this.topLeftCorner.style;
         if (t === null) {
             return;
@@ -482,7 +496,7 @@ function stickyHead(tableId, headConfig) {
         if (t.display !== 'none') {
             if (t.position === 'fixed') {
                 t.position = 'absolute';
-                t.top = flo.ylc - 1 - fireFoxOffset + 'px';
+                t.top = flo.y + 'px'; // flo.ylc - flo.lfc - 1 - fireFoxOffset + 'px';
                 t.left = parseInt(t.left, 10) + x - headConfig.leftDif + 'px';
                 return;
             }
@@ -503,11 +517,36 @@ function stickyHead(tableId, headConfig) {
             }
         }
     };
-    // //////////////
-    // functions called when scrolling within a DIV
-    // //////////////
+// //////////////
+// functions called when scrolling within a DIV
+// //////////////
+//********************************************
+//  scroll in a div
+//*******************************************
 
-    theHead.vsyncR = function (x, y) {
+    function scrollDiv(e) { /// scrolling in DIV
+        var y, x;
+        if (typeof e !== 'undefined') {
+            y = e.target.scrollTop;
+            x = e.target.scrollLeft;
+        } else {
+            flo.sy++;
+            flo.sx++;
+        }
+        if (flo.sy !== y) {// vertical scrolling
+            flo.sy = y;
+            window.requestAnimationFrame(function () {
+                theHead.vsyncR(x, y);
+                theLeftColumn.vsyncR(x, y);
+            });
+        }
+        if (flo.sx !== x) { // horizontal scrolling
+            flo.sx = x;
+            theLeftColumn.hsyncR(x, y);
+        }
+    }
+    theHead.vsyncR = function (x, y)
+    {
         var t = this.style;
         if ((y - 1 < flo.y || y > flo.bottom)) {
             t.display !== 'none' ? t.display = 'none' : '';
@@ -520,7 +559,8 @@ function stickyHead(tableId, headConfig) {
             t.top = y + 'px';
         }
     };
-    theLeftColumn.hsyncR = function (x, y) {
+    theLeftColumn.hsyncR = function (x, y)
+    {
         var t = this.style, tt = this.topLeftCorner.style;
         if (t === null) {
             return;
@@ -533,16 +573,18 @@ function stickyHead(tableId, headConfig) {
         }
         t.display === 'none' ? t.display = '' : '';
         if (tt.display === 'none') {
-            tt.top = flo.y + y + 'px';
+            // tt.top = y+'px';//absPos(myTable, tableParent).y + 'px';// flo.y - flo.flc + y + 'px';
+            tt.top = y <= flo.y ? y = flo.y + 'px' : y + 'px';
         }
         tt.display === 'none' ? tt.display = '' : '';
-        t.top = flo.ylc + 'px';//- flo.dy + 'px';
+        t.top = absPos(myTable, tableParent).y + 'px'; //flo.ylc - flo.lfc + 'px'; //- flo.dy + 'px';
         if (t.position === 'absolute') {
             t.left = x + 'px';
         }
         tt.left = /*flo.x  +*/ x + 'px';
     };
-    theLeftColumn.vsyncR = function (x, y) {
+    theLeftColumn.vsyncR = function (x, y)
+    {
         var t = this.style, tt = this.topLeftCorner.style;
         if (t === null) {
             return;
@@ -557,36 +599,39 @@ function stickyHead(tableId, headConfig) {
         }
         if (t.display !== 'none') {
             t.position !== 'absolute' ? t.position = 'absolute' : '';
-            if (t.top !== flo.ylc + 'px') {
-                t.top = flo.ylc + 'px';
+            let yy = absPos(myTable, tableParent).y + 'px';
+            if (t.top !== yy /*flo.ylc + 'px'*/) {
+                t.top = yy; //flo.ylc + 'px';
                 t.left = 0 + 'px';
             }
-            y = y > flo.y ? -flo.y + y : 0;
-            tt.top = flo.y + y + 'px';
+            //y = y > flo.y ? -flo.y + y : 0;
+            tt.top = y <= flo.y ? y = flo.y + 'px' : y + 'px';//yy + 'px';
+            ;//flo.y + y + 'px';
             return;
         }
     };
-    function setFlo(flo) { // flo are our 'floating/sticky' objects
-        var nr, nc, p, pp;
-
+    function setFlo(flo)
+    { // flo are our 'floating/sticky' objects
+        var nr, nc, p;
         nr = myTable.rows.length;
         nc = myTable.rows[nr - 1].cells.length;
         p = absPos(myTable, tableParent);
-        flo.ylc = absPos(myTable, tableParent).y + headHeight;
-        pp = absPos(myTable, tableParent);
+        flo.ylc = absPos(myTable.rows[headConfig.ncpth.length], tableParent).y;
         flo.y = p.y;
         flo.x = p.x;
-        flo.dy = pp.y;
-        flo.dx = pp.x;
+        flo.dy = p.y;
+        flo.dx = p.x;
         flo.lcw = myTable.rows[nr - 1].cells[nc - 1].clientWidth;
         flo.yEdge = flo.y + myTable.clientHeight - headHeight - /*last row*/ myTable.rows[nr - 1].clientHeight;
         flo.xEdge = flo.x + myTable.clientWidth - flo.lcw; // - /*lastcell*/ myTable.rows[nr - 1].cells[nc - 1].clientWidth;
         flo.right = flo.x + myTable.clientWidth - 1;
         flo.bottom = flo.y + myTable.clientHeight - 1;
-        flo.sx = -1;
-        flo.sy = -1;
+        if (theLeftColumn.style.display === 'none') {
+            flo.lfc = absPos(myTable.rows[headConfig.ncpth.length]).y - absPos(myTable.rows[0]).y + 1;
+        }
         return flo;
     }
+
     function getHeadConfig(headConfig) {
         var obj;
         //******************************************
@@ -628,6 +673,7 @@ function stickyHead(tableId, headConfig) {
         }
         return headConfig;
     }
+
     function absPos(obj, parent) {// return absolute x,y position of obj
         var ob, x, y;
         if (typeof parent === 'undefined') {
@@ -644,12 +690,13 @@ function stickyHead(tableId, headConfig) {
         return {'x': x, 'y': y};
     }
 
-    function rotate90(tableId) {
 
-        var aRows, table = null, padding = 4;
-        //***************************************
-        // locate table
-        // *************************************/
+    function rotate90(tableId) {
+        'use strict';
+        var table, p;
+        //********************************************
+        //  locate table
+        //*******************************************
         if (typeof tableId === 'string') {
             table = document.getElementById(tableId);
         } else if (typeof tableId === 'object') {
@@ -658,55 +705,64 @@ function stickyHead(tableId, headConfig) {
         if (table === null) {
             return;
         }
-        aRows = table.rows;
-        [].every.call(aRows, function (row) {
-            if (row.cells[0].tagName !== 'TH') {
-                return false;
-            }
-            rotateCell(row);
-            return true;
+//********************************************
+//  locate cells to rotate
+//*******************************************
+        p = table.querySelectorAll('[data-rotate]');
+        p.forEach((th) => {
+            let div, w, h;
+            //********************************************
+            //  wrap content with a DIV, append to cell
+            //*******************************************
+            div = document.createElement('DIV');
+            div.innerHTML = th.innerHTML;
+            div.style.display = 'inline-block';
+            th.innerHTML = '';
+            th.appendChild(div);
+            //********************************************
+            //  get current height and width
+            //*******************************************
+            h = div.clientHeight;
+            w = div.clientWidth;
+            //********************************************
+            //  rotate then swap height and width then 
+            //  repostion content in cell
+            //*******************************************
+            div.style.transformOrigin = 'top left';
+            div.style.transform = 'rotate(-90deg)';
+            div.style.whiteSpace = 'nowrap';
+            div.style.width = h + 'px';
+            div.style.height = w + 'px';
+            div.style.position = 'relative';
+            div.style.top = div.clientHeight + 'px';
+            //********************************************
+            //  don't know why but it works :-)
+            //*******************************************
+            div.querySelector('IMG') ? '' : div.style.display = 'flex'; // shaky ?
         });
-        function rotateCell(row) {
-            var maxw = -1;
-            [].forEach.call(row.cells, function (cell) {
-                var w, dd;
-                if (!cell.hasAttribute("data-rotate")) {
-                    cell.vAlign = 'bottom';
-                    return;
-                }
-                cell.vAlign = 'middle';
-                cell.innerHTML = '<div class=hgs_rotate>' + cell.innerHTML + '</div>';
-                w = cell.firstChild.clientWidth;
-                if (w > maxw) {
-                    maxw = w;
-                    cell.style.height = maxw + padding + 'px';
-                }
-                dd = cell.firstChild;
-                dd.style.width = cell.firstChild.clientHeight + 'px';
-                dd.style.top = (cell.clientHeight - dd.clientHeight - padding) / 2 + 'px';
-                dd.style.left = '0px';
-                dd.style.position = 'relative';
-            });
-        }
     }
+
+
     function newRow(ri) {
         let row, nc, i;
         if (hasLeftColumns) {
             row = theLeftColumn.firstChild.insertRow(ri);
             for (i = 0; i < headConfig.nccol; i++) {
                 row.insertCell(i);
+                row.cells[i].innerHTML = myTable.rows[ri].cells[i].innerHTML;
             }
         }
-        ri++;
+
         nc = myTable.rows[ri].cells.length;
         for (i = 0; i < nc; i++) {
             sync(ri, i);
         }
     }
+
     function deleteRow(ri) {
-        let row, nc, i;
+        let nc, i;
         if (hasLeftColumns) {
-           theLeftColumn.firstChild.deleteRow(ri - headConfig.ncpth.length);
+            theLeftColumn.firstChild.deleteRow(ri - headConfig.ncpth.length);
         }
         ri = myTable.rows.length - 1;
         nc = myTable.rows[ri].cells.length;
@@ -714,6 +770,7 @@ function stickyHead(tableId, headConfig) {
             sync(ri, i);
         }
     }
+
 
     function sync(ri, ci) {
         var cii, l, th, co;
@@ -725,21 +782,23 @@ function stickyHead(tableId, headConfig) {
         let ww = window.getComputedStyle(myTable).width;
         theHead.style.width = ww;
         co = myTable.rows[ri].cells[ci];
-        th = parseFloat(co.style.width);// try this first
+        th = parseFloat(co.style.width); // try this first
         if (isNaN(th)) {
             th = parseFloat(window.getComputedStyle(co).width);
         }
         theHead.firstChild.rows[l].cells[cii].style.width = th + 'px';
-
         if (hasLeftColumns) {
             let cell = myTable.rows[ri].cells[ci];
             if (ci < headConfig.nccol) { // part of theLeftColumn, topLeftCorner ?
-                theLeftColumn.firstChild.rows[ri - headConfig.ncpth.length].cells[ci].innerHTML = cell.innerHTML;
+                theLeftColumn.firstChild.rows[ri].cells[ci].innerHTML = cell.innerHTML;
                 topLeftCorner.firstChild.rows[headConfig.ncpth.length - 1].cells[ci].style.width = window.getComputedStyle(cell).width;
-                theLeftColumn.style.width = window.getComputedStyle(cell).width;
+                //theLeftColumn.style.width = window.getComputedStyle(cell).width;
+                theLeftColumn.firstChild.style.width = 'min-content';
+                theLeftColumn.firstChild.style.width = window.getComputedStyle(theLeftColumn.firstChild).width;
             }
-            let h = window.getComputedStyle(cell).height;
-            theLeftColumn.firstChild.rows[ri - headConfig.ncpth.length].cells[0].style.height = h;
+            theLeftColumn.firstChild.style.height = window.getComputedStyle(myTable).height;
+            let h = window.getComputedStyle(cell.parentNode).height;
+            theLeftColumn.firstChild.rows[ri].style.height = h;
         }
     }
 
@@ -755,9 +814,23 @@ function stickyHead(tableId, headConfig) {
         return -1;
     }
 
+    theHead.style.display = 'none';
+    topLeftCorner.style.display = 'none';
+    theLeftColumn.style.display = 'none';
+    setFlo(flo); // set
+    flo.sx = -1; // init
+    flo.sy = -1; // init
     scrollBody();
     sync(headConfig.ncpth.length, 0);
+//?????????????????????????????????????????????
+//  seems that this is  needed for firefox  ???
+
+    if (hasLeftColumns && navigator.userAgent.toLowerCase().indexOf('firefox') > -1) { // ugly !!
+        window.dispatchEvent(new Event('resize'));
+    }
+//?????????????????????????????????????????????
     return{
+
         sync: sync,
         scrollBody: scrollBody,
         newRow: newRow,

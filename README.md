@@ -20,13 +20,19 @@ value of 'fixed' or 'absolute' , depending on the element and scroll direction.
 For details regarding usage and implementation please see 
 files index.html and stickyHead.js 
 
-18.11.2021
+**27.11.2021**
 
-added code to support resize and relod events.
+Still some minor glitches when using sticky left column, sometimes offsets by 1 pixel in Chrome  
+can't figure out what causes this.
+Works also for table in div with overflow:scroll
 
-As of  14.05.2020 for :
+**18.11.2021**
+
+added code to support resize and reload events.
+
+**14.05.2020**
             
-                 Chrome, Opera, FireFox (with workaround for bug 1559098), Edge
+    Chrome, Opera, FireFox (with workaround for bug 1559098), Edge
                  
 
 Logic
