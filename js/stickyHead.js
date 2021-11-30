@@ -18,6 +18,7 @@ function stickyHead(tableId, headConfig) {
             scrollParent,
             scrollFunction,
             fireFoxOffset = 0,
+            self = {},
             tHeight, tWidth;
     //***************************************
     // locate table
@@ -773,7 +774,7 @@ function stickyHead(tableId, headConfig) {
 
 
     function sync(ri, ci) {
-        var cii, l, th, co;
+        var cii, l,  dy;
         l = theHead.firstChild.rows.length - 1;
         cii = findCi(ci, theHead.firstChild.rows[l].cells);
         if (cii === -1) {
@@ -781,18 +782,25 @@ function stickyHead(tableId, headConfig) {
         }
         let ww = window.getComputedStyle(myTable).width;
         theHead.style.width = ww;
-        co = myTable.rows[ri].cells[ci];
-        th = parseFloat(co.style.width); // try this first
-        if (isNaN(th)) {
-            th = parseFloat(window.getComputedStyle(co).width);
-        }
-        theHead.firstChild.rows[l].cells[cii].style.width = th + 'px';
+       
+        
+        //********************************************
+        //  weird but it works 
+        //********************************************
+        [].forEach.call(theHead.firstChild.rows[l].cells, (cell, i) => { // adjust all header cells
+            cell.style.width = window.getComputedStyle(myTable.rows[ri].cells[i]).width;
+        });
+        theHead.firstChild.rows[l].cells[cii].style.width = '';//  even weirder  why ?
+     
         if (hasLeftColumns) {
             let cell = myTable.rows[ri].cells[ci];
             if (ci < headConfig.nccol) { // part of theLeftColumn, topLeftCorner ?
                 theLeftColumn.firstChild.rows[ri].cells[ci].innerHTML = cell.innerHTML;
+                dy = topLeftCorner.style.display;
+                topLeftCorner.style.display = '';
                 topLeftCorner.firstChild.rows[headConfig.ncpth.length - 1].cells[ci].style.width = window.getComputedStyle(cell).width;
-                //theLeftColumn.style.width = window.getComputedStyle(cell).width;
+                topLeftCorner.style.display = dy;
+               
                 theLeftColumn.firstChild.style.width = 'min-content';
                 theLeftColumn.firstChild.style.width = window.getComputedStyle(theLeftColumn.firstChild).width;
             }
@@ -829,11 +837,12 @@ function stickyHead(tableId, headConfig) {
         window.dispatchEvent(new Event('resize'));
     }
 //?????????????????????????????????????????????
-    return{
-
+    self = {
         sync: sync,
         scrollBody: scrollBody,
         newRow: newRow,
         deleteRow: deleteRow
     };
+    myTable.sticky = self; // attache functions to table
+    return self;
 }
