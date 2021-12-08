@@ -31,9 +31,80 @@ Works also for table in div with overflow:scroll
 added code to support resize and reload events.
 
 **14.05.2020**
-            
-    Chrome, Opera, FireFox (with workaround for bug 1559098), Edge
-                 
+
+Chrome, Opera, FireFox (with workaround for bug 1559098), Edge
+
+API
+===
+
+```
+sth=stickyHead(id, config)
+```
+
+- **id**    
+- if string, the id for the table  
+- if object, the table itself  
+
+- **config**  
+    is a an object with four attributes.
+    ```
+    {ncpth: [1, 2], nccol: 2, topDif: 'topDif', leftDif: 'leftDif'}
+    ```
+- **ncpth**  
+    ncpth.length is the number of header rows from top of table  
+    ncpth[i] is the number of columns from left to take from row i of topLeftCorner  
+- **nnccol**  
+number of colmns from left for theLeftColumn  
+- **topfdif**  
+    if number, then pixels from top of document to set header sticky  
+
+    if string, the id of an object where the client heigt is the number of  pixels from top of document to set header sticky  
+
+    if object, the absolute y position of object, plus the objects client height is the number of  pixels from top of document to set header sticky  
+- **leftdif**  
+    if number, then pixels from left of document to set left columns  sticky  
+
+    if string, the id of an object where the client width is the number of  pixels from left of document to set left columns sticky  
+
+    if object, the absolute x position of object, plus the objects client width is the number of pixels from left of 
+    document to set left column sticky  
+
+```
+sth = stickyHead('t1', {ncpth: [1, 2], nccol: 2, topDif: 'topDif', leftDif: 'leftDif'});`
+```
+The return value for stickHead is an object revealing functions inside stickyHead.  
+You need to call these functions only when content changes within the table.
+```
+{
+    sync: sync,
+    scrollBody: scrollBody,
+    newRow: newRow,
+    deleteRow: deleteRow
+};
+```
+
+- Sync
+```
+    sync(rowIndex,cellIndex)
+```
+   Call this function if content of cell at rowIndex,cellIndex has changed, to keep geometry  
+   of sticky parts in sync with table
+
+- newRow
+```
+    newRow(rowIndex)
+```
+   Call this function if at rowIndex, a new row row has been inserted
+
+
+- dleteRow
+```
+    deleteRow(rowIndex)
+```
+   Call this function if the row at rowIndex, has been deleted
+
+
+
 
 Logic
 =====
