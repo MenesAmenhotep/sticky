@@ -573,16 +573,15 @@ function stickyHead(tableId, headConfig) {
             return;
         }
         t.display === 'none' ? t.display = '' : '';
-        if (tt.display === 'none') {
-            // tt.top = y+'px';//absPos(myTable, tableParent).y + 'px';// flo.y - flo.flc + y + 'px';
+        if (tt.display === 'none') {            
             tt.top = y <= flo.y ? y = flo.y + 'px' : y + 'px';
         }
         tt.display === 'none' ? tt.display = '' : '';
-        t.top = absPos(myTable, tableParent).y + 'px'; //flo.ylc - flo.lfc + 'px'; //- flo.dy + 'px';
+        t.top = absPos(myTable, tableParent).y + 'px';
         if (t.position === 'absolute') {
             t.left = x + 'px';
         }
-        tt.left = /*flo.x  +*/ x + 'px';
+        tt.left = x + 'px';
     };
     theLeftColumn.vsyncR = function (x, y)
     {
@@ -601,13 +600,11 @@ function stickyHead(tableId, headConfig) {
         if (t.display !== 'none') {
             t.position !== 'absolute' ? t.position = 'absolute' : '';
             let yy = absPos(myTable, tableParent).y + 'px';
-            if (t.top !== yy /*flo.ylc + 'px'*/) {
-                t.top = yy; //flo.ylc + 'px';
+            if (t.top !== yy ) {
+                t.top = yy; 
                 t.left = 0 + 'px';
-            }
-            //y = y > flo.y ? -flo.y + y : 0;
-            tt.top = y <= flo.y ? y = flo.y + 'px' : y + 'px';//yy + 'px';
-            ;//flo.y + y + 'px';
+            }          
+            tt.top = y <= flo.y ? y = flo.y + 'px' : y + 'px';//yy + 'px';           
             return;
         }
     };
@@ -627,7 +624,7 @@ function stickyHead(tableId, headConfig) {
         flo.xEdge = flo.x + myTable.clientWidth - flo.lcw; // - /*lastcell*/ myTable.rows[nr - 1].cells[nc - 1].clientWidth;
         flo.right = flo.x + myTable.clientWidth - 1;
         flo.bottom = flo.y + myTable.clientHeight - 1;
-        if (theLeftColumn.style.display === 'none') {
+        if (hasLeftColumns && theLeftColumn.style.display === 'none') {
             flo.lfc = absPos(myTable.rows[headConfig.ncpth.length]).y - absPos(myTable.rows[0]).y + 1;
         }
         return flo;
@@ -790,7 +787,7 @@ function stickyHead(tableId, headConfig) {
         [].forEach.call(theHead.firstChild.rows[l].cells, (cell, i) => { // adjust all header cells
             cell.style.width = window.getComputedStyle(myTable.rows[ri].cells[i]).width;
         });
-        theHead.firstChild.rows[l].cells[cii].style.width = '';//  even weirder  why ?
+        
      
         if (hasLeftColumns) {
             let cell = myTable.rows[ri].cells[ci];
@@ -823,8 +820,10 @@ function stickyHead(tableId, headConfig) {
     }
 
     theHead.style.display = 'none';
+    if (hasLeftColumns) {
     topLeftCorner.style.display = 'none';
     theLeftColumn.style.display = 'none';
+    }
     setFlo(flo); // set
     flo.sx = -1; // init
     flo.sy = -1; // init
