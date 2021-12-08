@@ -36,6 +36,7 @@ Chrome, Opera, FireFox (with workaround for bug 1559098), Edge
 
 API
 ===
+For a table, create sticky header, top left corner and sticky left columns
 
 ```
 sth=stickyHead(id, config)
@@ -72,8 +73,8 @@ number of colmns from left for theLeftColumn
 ```
 sth = stickyHead('t1', {ncpth: [1, 2], nccol: 2, topDif: 'topDif', leftDif: 'leftDif'});`
 ```
-The return value for stickHead is an object revealing functions inside stickyHead.  
-You need to call these functions only when content changes within the table.
+The return value for `stickyHead` is an object revealing functions inside `stickyHead`.  
+You need to call these functions only when content has changed within the table.
 ```
 {
     sync: sync,
@@ -83,21 +84,21 @@ You need to call these functions only when content changes within the table.
 };
 ```
 
-- Sync
+- `sync`
 ```
     sync(rowIndex,cellIndex)
 ```
    Call this function if content of cell at rowIndex,cellIndex has changed, to keep geometry  
    of sticky parts in sync with table
 
-- newRow
+- `newRow`
 ```
     newRow(rowIndex)
 ```
    Call this function if at rowIndex, a new row row has been inserted
 
 
-- dleteRow
+- `deleteRow`
 ```
     deleteRow(rowIndex)
 ```
