@@ -222,12 +222,12 @@ function stickyHead(tableId, headConfig) {
     }
 
     function makeLeftColumns() {
-//
-//******************************************
-//  copy HTML for left column , with this create sticky
-//  left data columns
-//*****************************************
-        var dataRows, temp = [], i, j, cst, n, cells, ri, hi;
+        //
+        //******************************************
+        //  copy HTML for left column , with this create sticky
+        //  left data columns
+        //*****************************************
+        var dataRows, temp = [], i, j, cst, n;
         if (hasLeftColumns === false) {
             return;
         }
@@ -573,7 +573,7 @@ function stickyHead(tableId, headConfig) {
             return;
         }
         t.display === 'none' ? t.display = '' : '';
-        if (tt.display === 'none') {            
+        if (tt.display === 'none') {
             tt.top = y <= flo.y ? y = flo.y + 'px' : y + 'px';
         }
         tt.display === 'none' ? tt.display = '' : '';
@@ -600,10 +600,10 @@ function stickyHead(tableId, headConfig) {
         if (t.display !== 'none') {
             t.position !== 'absolute' ? t.position = 'absolute' : '';
             let yy = absPos(myTable, tableParent).y + 'px';
-            if (t.top !== yy ) {
-                t.top = yy; 
+            if (t.top !== yy) {
+                t.top = yy;
                 t.left = 0 + 'px';
-            }          
+            }
             tt.top = y <= flo.y ? y = flo.y + 'px' : y + 'px';//yy + 'px';           
             return;
         }
@@ -760,7 +760,7 @@ function stickyHead(tableId, headConfig) {
     function deleteRow(ri) {
         let nc, i;
         if (hasLeftColumns) {
-            theLeftColumn.firstChild.deleteRow(ri - headConfig.ncpth.length);
+            theLeftColumn.firstChild.deleteRow(ri);
         }
         ri = myTable.rows.length - 1;
         nc = myTable.rows[ri].cells.length;
@@ -771,7 +771,7 @@ function stickyHead(tableId, headConfig) {
 
 
     function sync(ri, ci) {
-        var cii, l,  dy;
+        var cii, l, dy;
         l = theHead.firstChild.rows.length - 1;
         cii = findCi(ci, theHead.firstChild.rows[l].cells);
         if (cii === -1) {
@@ -779,16 +779,16 @@ function stickyHead(tableId, headConfig) {
         }
         let ww = window.getComputedStyle(myTable).width;
         theHead.style.width = ww;
-       
-        
+
+
         //********************************************
         //  weird but it works 
         //********************************************
         [].forEach.call(theHead.firstChild.rows[l].cells, (cell, i) => { // adjust all header cells
             cell.style.width = window.getComputedStyle(myTable.rows[ri].cells[i]).width;
         });
-        
-     
+
+
         if (hasLeftColumns) {
             let cell = myTable.rows[ri].cells[ci];
             if (ci < headConfig.nccol) { // part of theLeftColumn, topLeftCorner ?
@@ -797,7 +797,7 @@ function stickyHead(tableId, headConfig) {
                 topLeftCorner.style.display = '';
                 topLeftCorner.firstChild.rows[headConfig.ncpth.length - 1].cells[ci].style.width = window.getComputedStyle(cell).width;
                 topLeftCorner.style.display = dy;
-               
+
                 theLeftColumn.firstChild.style.width = 'min-content';
                 theLeftColumn.firstChild.style.width = window.getComputedStyle(theLeftColumn.firstChild).width;
             }
@@ -821,8 +821,8 @@ function stickyHead(tableId, headConfig) {
 
     theHead.style.display = 'none';
     if (hasLeftColumns) {
-    topLeftCorner.style.display = 'none';
-    theLeftColumn.style.display = 'none';
+        topLeftCorner.style.display = 'none';
+        theLeftColumn.style.display = 'none';
     }
     setFlo(flo); // set
     flo.sx = -1; // init
