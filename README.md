@@ -6,6 +6,9 @@ fixed/sticky header and left columns for tables
 Look at html/index.html  for usage.
 
 A demo is located here <a href='https://www.hgsweb.de/sticky/index.html'>www.hgsweb.de/sticky</a>
+and a more complex demo at
+<a href='https://www.hgsweb.de/tableEdit/index.html'>www.hgsweb.de/tableEdit</a>
+
 
 A small JavaScript file implementing sticky table headers and 
 sticky left columns to give you the freeze pane functionality 
@@ -47,28 +50,28 @@ sth=stickyHead(id, config)
 - if object, the table itself  
 
 - **config**  
-    is a an object with four attributes.
-    ```
-    {ncpth: [1, 2], nccol: 2, topDif: 'topDif', leftDif: 'leftDif'}
-    ```
+is a an object with four attributes.
+```
+{ncpth: [1, 2], nccol: 2, topDif: 'topDif', leftDif: 'leftDif'}
+```
 - **ncpth**  
-    ncpth.length is the number of header rows from top of table  
-    ncpth[i] is the number of columns from left to take from row i of topLeftCorner  
+ncpth.length is the number of header rows from top of table  
+ncpth[i] is the number of columns from left to take from row i of topLeftCorner  
 - **nnccol**  
 number of colmns from left for theLeftColumn  
 - **topfdif**  
-    if number, then pixels from top of document to set header sticky  
+if number, then pixels from top of document to set header sticky  
 
-    if string, the id of an object where the client heigt is the number of  pixels from top of document to set header sticky  
+if string, the id of an object where the client heigt is the number of  pixels from top of document to set header sticky  
 
-    if object, the absolute y position of object, plus the objects client height is the number of  pixels from top of document to set header sticky  
+if object, the absolute y position of object, plus the objects client height is the number of  pixels from top of document to set header sticky  
 - **leftdif**  
-    if number, then pixels from left of document to set left columns  sticky  
+if number, then pixels from left of document to set left columns  sticky  
 
-    if string, the id of an object where the client width is the number of  pixels from left of document to set left columns sticky  
+if string, the id of an object where the client width is the number of  pixels from left of document to set left columns sticky  
 
-    if object, the absolute x position of object, plus the objects client width is the number of pixels from left of 
-    document to set left column sticky  
+if object, the absolute x position of object, plus the objects client width is the number of pixels from left of 
+document to set left column sticky  
 
 ```
 sth = stickyHead('t1', {ncpth: [1, 2], nccol: 2, topDif: 'topDif', leftDif: 'leftDif'});`
@@ -77,32 +80,32 @@ The return value for `stickyHead` is an object revealing functions inside `stick
 You need to call these functions only when content has changed within the table.
 ```
 {
-    sync: sync,
-    scrollBody: scrollBody,
-    newRow: newRow,
-    deleteRow: deleteRow
+sync: sync,
+scrollBody: scrollBody,
+newRow: newRow,
+deleteRow: deleteRow
 };
 ```
 
 - `sync`
 ```
-    sync(rowIndex,cellIndex)
+sync(rowIndex,cellIndex)
 ```
-   Call this function if content of cell at rowIndex,cellIndex has changed, to keep geometry  
-   of sticky parts in sync with table
+Call this function if content of cell at rowIndex,cellIndex has changed, to keep geometry  
+of sticky parts in sync with table
 
 - `newRow`
 ```
-    newRow(rowIndex)
+newRow(rowIndex)
 ```
-   Call this function if at rowIndex, a new row row has been inserted
+Call this function if at rowIndex, a new row row has been inserted
 
 
 - `deleteRow`
 ```
-    deleteRow(rowIndex)
+deleteRow(rowIndex)
 ```
-   Call this function if the row at rowIndex, has been deleted
+Call this function if the row at rowIndex, has been deleted
 
 
 
