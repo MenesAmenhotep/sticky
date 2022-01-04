@@ -145,15 +145,13 @@ function stickyHead(tableId, headConfig) {
         // The head would be to small because we 
         // do not have the data rows. Therefore we
         // adjust the width by using the cell width
-        // from original header cells
+        // from original header cells.
+        // Take only very last row of header.
         // *************************************/
-        for (i = 0; i < headConfig.ncpth.length; i++) {
+        for (i = headConfig.ncpth.length - 1; i < headConfig.ncpth.length; i++) {
             c0 = myTable.rows[i].cells;
             [].forEach.call(c0, (cell, j) => {
                 theHead.firstChild.rows[i].cells[j].style.width = window.getComputedStyle(cell).width;
-                if (fireFoxOffset === 0) {
-// theHead.firstChild.rows[i].cells[j].style.padding = 0;
-                }
             });
         }
         headHeight = theHead.firstChild.clientHeight; // save because it is rendered now
@@ -201,9 +199,10 @@ function stickyHead(tableId, headConfig) {
         // top left corner of header must have same geometrie 
         // as original. Therefor we adjust cell width and height
         // using the original cell dimensions.
+        // Take only very last row of header.
         // *************************************/
 
-        for (i = 0; i < headConfig.ncpth.length; i++) {
+        for (i = headConfig.ncpth.length - 1; i < headConfig.ncpth.length; i++) {
             c0 = myTable.rows[i].cells;
             maxHeight = getMaxHeightStyle(c0); // look for highest cell in this row
             if (headConfig.ncpth[i] === 0) {
@@ -222,11 +221,11 @@ function stickyHead(tableId, headConfig) {
     }
 
     function makeLeftColumns() {
-        //
-        //******************************************
-        //  copy HTML for left column , with this create sticky
-        //  left data columns
-        //*****************************************
+//
+//******************************************
+//  copy HTML for left column , with this create sticky
+//  left data columns
+//*****************************************
         var dataRows, temp = [], i, j, cst, n;
         if (hasLeftColumns === false) {
             return;
@@ -771,13 +770,15 @@ function stickyHead(tableId, headConfig) {
 
 
     function sync(ri, ci) {
-        var cii, l, dy;
+        var cii, l, dy, ww;
         l = theHead.firstChild.rows.length - 1;
         cii = findCi(ci, theHead.firstChild.rows[l].cells);
         if (cii === -1) {
             return;
         }
-        let ww = window.getComputedStyle(myTable).width;
+
+        ww = window.getComputedStyle(myTable).width;
+        theHead.firstChild.style.width = ww;
         theHead.style.width = ww;
 
 
@@ -833,10 +834,12 @@ function stickyHead(tableId, headConfig) {
 //  seems that this is  needed for firefox  ???
 
     if (hasLeftColumns && navigator.userAgent.toLowerCase().indexOf('firefox') > -1) { // ugly !!
-        window.dispatchEvent(new Event('resize'));
+        //    window.dispatchEvent(new Event('resize'));
     }
 //?????????????????????????????????????????????
     self = {
+        stickyHead: stickyHead,
+        headConfig: headConfig,
         sync: sync,
         scrollBody: scrollBody,
         newRow: newRow,
